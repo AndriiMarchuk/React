@@ -1,0 +1,332 @@
+/*************************************
+** JavaScript intro for REACT course
+**************************************/
+
+
+// object matching
+x=1
+y=1
+o = {x,y}
+o1 = {a:1,b:2,c:3}
+let {a,b} = o1
+
+// arrays manipulation: matching, spread operator
+arr = [1,2,3]
+[x,y,z] = arr // array matching 
+[...arr] // array copy
+[0,...arr,100]
+[0,...arr,...arr]
+[0,...arr,arr]
+{...o1} // not working yet
+{...o1,x:1} // not working - use Object.assign
+
+// array: map/filter/reduce
+arr.find(x=>x>2)
+arr.findIndex(x=>x>2)
+a = ["first","second","third"]
+a.map(x=>x.length)
+a.map(x=>x.length).reduce((x,y)=>x+y)
+a.map(x=>x.length).reduce((x,y)=>x+y)/a.length
+a.forEach(x=>x.length)
+a.forEach(x=>console.log(x.length))
+a.filter(x=>x.length>5)
+
+
+/*******************
+* Object.assign
+********************/
+Object.assign(o, {z:3})
+o
+Object.assign(o, {a:1,b:2}, {c:3,d:4})
+o = {x,y}
+o1 = o
+o1.a = 2
+o1 = Object.assign({}, o)
+o1.b = 10
+Object.assign(o2, o)
+a = arr
+a.push(5)
+a = [...arr]
+a.push(100)
+o1 = Object.assign({}, o)
+o.arr = [1,2,3]
+o1 = Object.assign({}, o)
+o = {...o1} // needs Babel and plugin
+
+// instanceof, typeof
+for (a in o) {
+   console.log(o[a]);
+}
+o.f = x=>x+1
+o.f instanceof Function
+o.f instanceof Object
+o.f instanceof Array
+o.a instanceof Number
+typeof(o.a)
+new Number(1) instanceof Number
+
+// for of vs. for in
+a = [1,2,3]
+for (a of arr) {
+   console.log(a);
+}
+for (a in arr) {
+   console.log(arr[a]);
+}
+arr.x = "hello"
+for (a in arr) {
+   console.log(a+"="+arr[a]);
+}
+p1 = {name:"Dima",age:30}
+o[p1]=1000
+o[p] // 1000
+
+// using Map
+map = new Map()
+map.set(p,1000)
+map.set(p1,100)
+o[1] = 100
+o["1"]
+arr["0"]
+// iterating Map
+map.entries()
+for (let [key,value] of map.entries()) { console.log(key+"="+value) }
+
+p.toString = ()=>this.name
+for (let [key,value] of map.entries()) { console.log(key+"="+value) }
+p.toString = function() { return this.name }
+
+for (let [key,value] of map.entries()) { 
+	console.log(key+"="+value) 
+}
+
+// string interpolation
+s = `hello
+world`
+
+s = `hello ${a} ${b}
+world`
+s = "hello "+a+" "+b+" "+
+"world"
+
+// rest arguments
+function f(x,y,...a) {
+   console.log(a);
+}
+f(1,2,3,4,5)
+
+// default values
+function f(x=1,y=2) {
+   console.log(x+y);
+}
+f()
+f(100)
+eval("2+2")
+f = new Function("x","y","return x+y")
+f(1,2)
+
+// bind() and call()
+function printer() {
+   for (a in this) {
+      console.log(a+"="+this[a]);
+   }
+}
+pp = printer.bind(p)
+printer.call(p)
+p.printer = printer.bind(p)
+arr.forEach(x=>console.log(this+":"+x))
+
+// getter and setter
+class Person3 {
+   constructor(name) {
+     this._name = name;
+     return {a:100};
+   }
+   get name() {
+     return this._name+"!";
+   }
+   set name(name) { this._name = name;}
+}
+p = new Person3("Kirill")
+
+ 
+/****************
+* using bind  
+*****************/
+f = function(a,b) { console.log(a+b) }
+g = f.bind(null,1,2)
+g()
+f = function(a,b,c) { console.log(a+b+c) }
+g = f.bind(1,2)
+g = f.bind(null, 1,2)
+g()
+g(10)
+
+
+
+/****************
+* asynchronous function 
+*****************/
+
+function add(x,y,f) {
+   setTimeout(()=>f(x+y),1000);
+}
+// callback hell
+add(1,2, 
+	x=>add(x,3, 
+		y=>console.log(y)))
+
+/****************
+* PROMISES
+*****************/
+function add(x,y) {
+   return new Promise(function(resolve) {
+		setTimeout(()=>resolve(x+y),1000);
+   });
+}
+
+add(1,2).then(x=>console.log(x))
+add(1,2)
+.then(x=>add(x,3))
+.then(x=>console.log(x))
+
+// Promise with reject
+function add(x,y) {
+   return new Promise(function(resolve, reject) {
+		setTimeout(()=>x<0?reject("x<0!"):resolve(x+y),1000);
+   });
+}
+
+add(-1,2)
+.then(x=>add(x,3))
+.then(x=>console.log(x))
+.catch(e=>console.log("ERROR:"+e))
+
+add(1,2)
+.then(x=>add(-x,3))
+.then(x=>console.log(x))
+.catch(e=>console.log("ERROR:"+e))
+
+/***********************
+* ASYNC/AWAIT SYNTAX
+************************/
+
+async function f() {
+   let x = await add(1,2);
+   let y = await add(x,10);
+   console.log(y);
+}
+f()
+async function f() {
+   let x = await add(1,2);
+   let y = await add(x,10);
+   return y;
+}
+f().then(x=>console.log(x))
+// normal execution
+async function f() {
+   try {
+     let x = await add(1,2);
+     let y = await add(x,10);
+     return y;
+   } catch (e) { console.log("ERR:"+e); }
+}
+// throwing exception
+async function f() {
+   try {
+     let x = await add(-1,2);
+     let y = await add(x,10);
+     return y;
+   } catch (e) { console.log("ERR:"+e); }
+}
+
+
+/***********************
+* closure
+************************/
+function f(config) {
+   return ()=>"I'm configured with "+config;
+}
+g = f("hello")
+g()
+
+
+// pseudo length in arrays
+a = new Array(100000000000)
+a = new Array(10).fill(0)
+a[1000] = 100
+a.fill(0,10)
+a.fill(0,0,5)
+
+/*****************
+* MIXIN IN ES6
+******************/
+
+class Polygon {
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}
+class Square extends Polygon {
+  constructor(sideLength) {
+    super(sideLength, sideLength);
+  }
+  get area() {
+    return this.height * this.width;
+  }
+  set sideLength(newLength) {
+    this.height = newLength;
+    this.width = newLength;
+  }
+}
+class Printer {
+   print() {
+      for (var e in this) console.log(e);
+   }
+}
+function mixin(mixinTo, mixinFrom) {
+    var from = mixinFrom.prototype;
+	var to = mixinTo.prototype;
+    for(m of Object.getOwnPropertyNames(from)) {
+        if (typeof from[m] != "function") {
+            continue;        
+		}
+		var f = Reflect.get(from, m);
+		Reflect.set(to, m, f);
+    }
+}
+mixin(Square, Printer)
+var square = new Square(2);
+square.print()
+
+
+/************************************
+* MIXIN preserving original function call
+*************************************/
+
+function mixin2(mixinTo, mixinFrom) {
+    var from = mixinFrom.prototype;
+	var to = mixinTo.prototype;
+    for(m of Object.getOwnPropertyNames(from)) {
+        if (typeof from[m] != "function") {
+            continue;        
+		}
+        var f_init=null; // original method
+        if (to.hasOwnProperty(m)) f_init = Reflect.get(to,m);
+	var f = Reflect.get(from, m);
+	Reflect.set(to, m, function() { f_init&&f_init();f();} );
+    }
+}
+class Test {
+  test() { console.log("I am test"); }
+}
+class Mixin {
+  test() { console.log("I'm mixin test"); }
+}
+mixin2(Test,Mixin)
+t = new Test()
+t.test() 
+/* PRINTS:
+* I am test
+* I'm mixin test */
