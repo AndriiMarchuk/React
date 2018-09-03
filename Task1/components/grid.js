@@ -1,13 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {hashHistory} from 'react-router'
+import { connect } from 'react-redux'
 
-const dataSource = [
-    {firstName: "John", lastName: "Doe", active: false},
-    {firstName: "Mary", lastName: "Moe", active: false},
-    {firstName: "Peter", lastName: "Noname", active: true}
-];
-
-export default class GridComponent extends React.Component {
+class GridComponent extends React.Component {
     constructor() {
         super();
         this.state = {
@@ -25,9 +21,6 @@ export default class GridComponent extends React.Component {
     toggleActive(index){
         let {records} = this.state;
         records[index].active = !records[index].active;
-        this.setState({
-            records:records
-        })
     }
 
     handleFilterChange(e){
@@ -39,7 +32,7 @@ export default class GridComponent extends React.Component {
     }
 
     render() {
-        let records = this.state.records.map((record) => {
+        let records = this.props.records.map((record, index)=>{
             return <GridRecord record={record}/>
         });
         return (
@@ -50,6 +43,7 @@ export default class GridComponent extends React.Component {
                 <table className="table table-condensed">
                     <thead>
                     <tr>
+                        <th>Id</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Active</th>
@@ -69,9 +63,15 @@ export default class GridComponent extends React.Component {
 }
 
 export class GridRecord extends React.Component {
-    render() {
+    showUserDetails(e){
+        e.preventDefault();
+        hashHistory.push(`/details/${this.props.record.id}`);
+    }
+
+    render(){
         let {record} = this.props;
         return <tr>
+            <th onClick={this.showUserDetails.bind(this)}><a href="#">{record.id}</a></th>
             <th>{record.firstName}</th>
             <th>{record.lastName}</th>
             <th><input type="checkbox" checked={record.active} onChange={this.props.toggleActive}/></th>
@@ -88,3 +88,18 @@ GridRecord.propTypes = {
         active: PropTypes.bool.isRequired
     })
 };
+
+GridComponent.propTypes = {
+    records: PropTypes.array.isRequired
+};
+
+function mapStateToProps(state) {
+    return {
+        records: state.grid
+    }
+}
+
+export default connect(
+    mapStateToProps
+)(GridComponent)
+
