@@ -13,22 +13,19 @@ class GridComponent extends React.Component {
 
     componentDidMount(){
         this.refs.filterInput && this.refs.filterInput.focus();
-        this.setState({
-            records:dataSource
-        })
     }
 
     toggleActive(index){
-        let {records} = this.state;
-        records[index].active = !records[index].active;
+        let {dispatch} = this.props;
+        dispatch({
+            type:"TOGGLE_ACTIVE",
+            value:index
+        });
     }
 
     handleFilterChange(e){
         let value = e.target.value,
             records = dataSource.filter((record) => record.firstName.toUpperCase().includes(value.toUpperCase()));
-        this.setState({
-            records:records
-        });
     }
 
     render() {
@@ -50,13 +47,13 @@ class GridComponent extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {this.state.records.map((record, index)=>{
+                    {this.props.records.map((record, index)=>{
                         return <GridRecord record={record} key={index} toggleActive={this.toggleActive.bind(this, index)}/>
                     })}
                     </tbody>
                 </table>
                 <div>{this.props.children &&
-                React.cloneElement(this.props.children, { records: this.state.records })}</div>
+                React.cloneElement(this.props.children, { records: this.props.records })}</div>
             </div>
         )
     }
