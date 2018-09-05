@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {hashHistory} from 'react-router'
 import { connect } from 'react-redux'
+import {filterGrid, toggleActive, loadDataInGrid} from '../actions'
 
 class GridComponent extends React.Component {
     constructor() {
@@ -13,25 +14,31 @@ class GridComponent extends React.Component {
 
     componentDidMount(){
         this.refs.filterInput && this.refs.filterInput.focus();
+        this.loadData();
+    }
+    loadData(){
+        let {dispatch} = this.props;
+        dispatch(loadDataInGrid());
     }
 
     toggleActive(index){
         let {dispatch} = this.props;
-        dispatch({
-            type:"TOGGLE_ACTIVE",
-            value:index
-        });
+        dispatch(toggleActive(index));
     }
-
     handleFilterChange(e){
-        let value = e.target.value,
-            records = this.props.records.filter((record) => record.firstName.toUpperCase().includes(value.toUpperCase()));
+        let {dispatch} = this.props;
+        dispatch(filterGrid(e.target.value));
     }
 
     render() {
         let records = this.props.records.map((record, index)=>{
             return <GridRecord record={record}/>
         });
+        if(this.props.loading){
+            return (
+                <div style={{width:300, height: 300, padding: 20}}>Loading...</div>
+            )
+        }
         return (
             <div style={{width:300, height: 300, padding: 20}}>
                 <p>
@@ -87,16 +94,21 @@ GridRecord.propTypes = {
 };
 
 GridComponent.propTypes = {
-    records: PropTypes.array.isRequired
+    records: PropTypes.array.isRequired,
+    filtered: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        records: state.grid
+        records: state.grid.records,
+        filtered: state.grid.filtered,
+        loading: state.grid.loading
     }
 }
 
 export default connect(
     mapStateToProps
 )(GridComponent)
+
 
