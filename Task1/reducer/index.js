@@ -19,13 +19,14 @@ let gridRecords = [
         skills:["Fortran", "Lua", "R#"]
     }];
 
-export const rootReducer = combineReducers({
-    details,
-    grid
-});
-
 export function grid(state = gridRecords, action){
     switch (action.type) {
+        case "TOGGLE_ACTIVE":
+            let newState = [...state];
+            newState[action.value].active = !newState[action.value].active;
+            return newState;
+        case "FILTER":
+        //Filter will be implemented later
         default:
             return state
     }
@@ -38,3 +39,8 @@ export function details(state = detailsRecords, action){
     }
 }
 
+
+export const rootReducer = combineReducers({
+    details,
+    grid
+});

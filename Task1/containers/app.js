@@ -3,7 +3,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import GridComponent from '../components/grid';
 import {SummaryActive, SummaryUsers} from '../components/summaries';
-import {UserDetail} from "../components/user-details";
+import UserDetails from "../components/user-details";
 import { Router, Route, Link, hashHistory} from 'react-router'
 import { Provider } from 'react-redux'
 import configureStore from '../store/index'
@@ -30,8 +30,8 @@ render(
         <Router history={hashHistory}>
             <Route path="/" component={App}>
                 <Route path="grid" component={GridComponent}/>
-                <Route path="details" component={UserDetail}>
-                    <Route path="/details/:id" component={UserDetail}/>
+                <Route path="details" component={UserDetails}>
+                    <Route path="/details/:id" component={UserDetails}/>
                 </Route>
             </Route>
         </Router>

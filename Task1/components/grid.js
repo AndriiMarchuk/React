@@ -25,7 +25,7 @@ class GridComponent extends React.Component {
 
     handleFilterChange(e){
         let value = e.target.value,
-            records = dataSource.filter((record) => record.firstName.toUpperCase().includes(value.toUpperCase()));
+            records = this.props.records.filter((record) => record.firstName.toUpperCase().includes(value.toUpperCase()));
     }
 
     render() {
